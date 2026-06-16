@@ -10,6 +10,7 @@ export const mockCourses: Course[] = [
     department: "CSE",
     program: "B.Tech CSE",
     semester: 1,
+    category: "Core",
   },
   {
     id: "2",
@@ -20,6 +21,7 @@ export const mockCourses: Course[] = [
     department: "CSE",
     program: "B.Tech CSE",
     semester: 2,
+    category: "Core",
   },
   {
     id: "3",
@@ -30,6 +32,7 @@ export const mockCourses: Course[] = [
     department: "Mathematics",
     program: "B.Tech CSE",
     semester: 1,
+    category: "Core",
   },
 ];
 

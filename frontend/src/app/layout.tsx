@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Navbar, PageContainer } from "@/components/common";
 
 export const metadata: Metadata = {
   title: "Curriculum Chatbot",
@@ -14,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="min-h-screen bg-gray-50">
+        <Navbar />
+        <PageContainer>{children}</PageContainer>
+      </body>
     </html>
   );
 }

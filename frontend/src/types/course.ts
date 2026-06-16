@@ -1,3 +1,5 @@
+export type CourseCategory = "Core" | "Elective" | "Lab" | "Audit";
+
 export interface Course {
   id: string;
   code: string;
@@ -7,6 +9,7 @@ export interface Course {
   department: string;
   program: string;
   semester: number;
+  category: CourseCategory;
 }
 
 export interface Program {
