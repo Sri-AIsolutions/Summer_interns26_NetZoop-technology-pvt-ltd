@@ -7,41 +7,41 @@ interface CourseTableProps {
 
 export function CourseTable({ courses }: CourseTableProps) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto rounded-xl border border-slate-200">
+      <table className="min-w-full divide-y divide-slate-200">
+        <thead className="bg-slate-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
               Code
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
               Course Name
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
               L-T-P
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
               Credits
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
               Category
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
+        <tbody className="divide-y divide-slate-100 bg-white">
           {courses.map((course) => (
-            <tr key={course.id} className="hover:bg-gray-50">
-              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+            <tr key={course.id} className="transition-colors hover:bg-slate-50">
+              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">
                 {course.code}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-700">
+              <td className="px-6 py-4 text-sm text-slate-600">
                 {course.title}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
                 {course.lectureHours}-{course.tutorialHours}-
                 {course.practicalHours}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
                 {course.credits}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-sm">

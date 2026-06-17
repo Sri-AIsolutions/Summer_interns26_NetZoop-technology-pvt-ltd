@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import { Navbar } from "@/components/common/Navbar";
 import "./globals.css";
-import { Navbar, PageContainer } from "@/components/common";
 
 export const metadata: Metadata = {
-  title: "Curriculum Chatbot",
+  title: "Amrita Curriculum Assistant",
   description:
     "AI-powered curriculum information system for Amrita Vishwa Vidyapeetham",
 };
@@ -15,9 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-gray-50">
+      <body className="min-h-screen antialiased">
         <Navbar />
-        <PageContainer>{children}</PageContainer>
+        {children}
       </body>
     </html>
   );

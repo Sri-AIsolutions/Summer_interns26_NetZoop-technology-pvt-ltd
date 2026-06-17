@@ -8,11 +8,12 @@ export function CourseTableFooter({
   courseCount,
 }: CourseTableFooterProps) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50 px-6 py-4">
-      <p className="text-sm text-gray-700">
-        <span className="font-medium">{courseCount}</span>{" "}
+    <div className="rounded-xl border border-slate-200 bg-slate-50 px-6 py-4">
+      <p className="text-sm text-slate-600">
+        <span className="font-semibold text-slate-900">{courseCount}</span>{" "}
         {courseCount === 1 ? "course" : "courses"} —{" "}
-        <span className="font-medium">{totalCredits}</span> total credits
+        <span className="font-semibold text-slate-900">{totalCredits}</span>{" "}
+        total credits
       </p>
     </div>
   );

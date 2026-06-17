@@ -29,10 +29,16 @@ export default function CoursesPage() {
     if (!selectedProgram) return;
 
     setLoading(true);
-    getCoursesBySemester(selectedProgram, selectedSemester).then((data) => {
-      setCourses(data);
-      setLoading(false);
-    });
+    getCoursesBySemester(selectedProgram, selectedSemester)
+      .then((data) => {
+        setCourses(data);
+      })
+      .catch(() => {
+        setCourses([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [selectedProgram, selectedSemester]);
 
   const totalCredits = courses.reduce((sum, c) => sum + c.credits, 0);

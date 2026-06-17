@@ -1,17 +1,36 @@
 import { mockCoursesData } from "@/data/mockCourses";
 import type { Course } from "@/types";
 
-export async function searchCourses(query: string): Promise<Course[]> {
+export async function searchCourses(rawQuery: string): Promise<Course[]> {
   await new Promise((resolve) => setTimeout(resolve, 300));
 
-  const q = query.toLowerCase().trim();
+  const q = rawQuery.toLowerCase().trim();
   if (!q) return [];
 
-  return mockCoursesData.filter(
-    (course) =>
-      course.code.toLowerCase().includes(q) ||
-      course.title.toLowerCase().includes(q)
-  );
+  const codePattern = /\b[a-z]{1,3}\d{1,4}[a-z]?\d?\b/g;
+  const codeMatches = q.match(codePattern);
+
+  if (codeMatches) {
+    const byCode = mockCoursesData.filter((course) =>
+      codeMatches.some((m) => course.code.toLowerCase() === m)
+    );
+    if (byCode.length > 0) return byCode;
+  }
+
+  return mockCoursesData.filter((course) => {
+    const code = course.code.toLowerCase();
+    const title = course.title.toLowerCase();
+    const cat = course.category.toLowerCase();
+
+    if (code.includes(q) || title.includes(q)) return true;
+
+    if (cat.includes(q) || q.includes(cat)) return true;
+
+    const words = q.split(/\s+/).filter((w) => w.length >= 3);
+    if (words.some((w) => code.includes(w) || title.includes(w))) return true;
+
+    return false;
+  });
 }
 
 function calculateSimilarity(a: string, b: string): number {

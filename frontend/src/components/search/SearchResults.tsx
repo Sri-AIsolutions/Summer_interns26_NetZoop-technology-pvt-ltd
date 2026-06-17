@@ -9,7 +9,7 @@ interface SearchResultsProps {
 export function SearchResults({ results, query }: SearchResultsProps) {
   return (
     <div className="space-y-3">
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-slate-500">
         Found {results.length} {results.length === 1 ? "result" : "results"} for
         &ldquo;{query}&rdquo;
       </p>

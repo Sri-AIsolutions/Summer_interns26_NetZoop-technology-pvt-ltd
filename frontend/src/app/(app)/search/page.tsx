@@ -27,19 +27,25 @@ export default function SearchPage() {
     }
 
     setLoading(true);
-    searchCourses(debouncedQuery).then((data) => {
-      setResults(data);
+    searchCourses(debouncedQuery)
+      .then((data) => {
+        setResults(data);
 
-      if (data.length === 0) {
-        getSuggestions(debouncedQuery).then((sugs) => {
-          setSuggestions(sugs);
-        });
-      } else {
+        if (data.length === 0) {
+          getSuggestions(debouncedQuery).then((sugs) => {
+            setSuggestions(sugs);
+          });
+        } else {
+          setSuggestions([]);
+        }
+      })
+      .catch(() => {
+        setResults([]);
         setSuggestions([]);
-      }
-
-      setLoading(false);
-    });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [debouncedQuery]);
 
   const hasSearched = debouncedQuery.length >= 2;

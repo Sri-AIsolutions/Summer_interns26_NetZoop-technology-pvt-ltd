@@ -6,10 +6,10 @@ interface CourseCategoryBadgeProps {
 }
 
 const categoryStyles: Record<CourseCategory, string> = {
-  Core: "bg-blue-100 text-blue-800",
-  Elective: "bg-purple-100 text-purple-800",
-  Lab: "bg-green-100 text-green-800",
-  Audit: "bg-gray-100 text-gray-800",
+  Core: "bg-brand-50 text-brand-600",
+  Elective: "bg-purple-50 text-purple-700",
+  Lab: "bg-emerald-50 text-emerald-700",
+  Audit: "bg-slate-100 text-slate-600",
 };
 
 export function CourseCategoryBadge({ category }: CourseCategoryBadgeProps) {

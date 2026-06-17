@@ -14,12 +14,12 @@ interface CourseMetaProps {
 
 export function CourseMeta({ course }: CourseMetaProps) {
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
       <span>
         L-T-P: {course.lectureHours}-{course.tutorialHours}-
         {course.practicalHours}
       </span>
-      <span>
+      <span className="font-medium text-slate-700">
         {course.credits} {course.credits === 1 ? "credit" : "credits"}
       </span>
       <CourseCategoryBadge category={course.category} />

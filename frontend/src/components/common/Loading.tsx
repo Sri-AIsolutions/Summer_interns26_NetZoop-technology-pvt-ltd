@@ -19,7 +19,7 @@ export function Loading({ size = "md", label = "Loading..." }: LoadingProps) {
       className="flex items-center justify-center"
     >
       <svg
-        className={cn("animate-spin text-blue-600", sizeClasses[size])}
+        className={cn("animate-spin text-brand-500", sizeClasses[size])}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

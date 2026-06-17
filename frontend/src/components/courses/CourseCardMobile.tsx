@@ -8,10 +8,14 @@ interface CourseCardMobileProps {
 
 export function CourseCardMobile({ course }: CourseCardMobileProps) {
   return (
-    <Card className="space-y-2">
+    <Card className="space-y-3">
       <div>
-        <p className="text-sm font-medium text-gray-900">{course.code}</p>
-        <p className="text-sm text-gray-700">{course.title}</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          {course.code}
+        </p>
+        <p className="mt-0.5 text-base font-semibold text-slate-900">
+          {course.title}
+        </p>
       </div>
       <CourseMeta course={course} />
     </Card>
