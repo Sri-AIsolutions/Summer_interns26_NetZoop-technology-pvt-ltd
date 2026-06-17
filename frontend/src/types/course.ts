@@ -4,6 +4,9 @@ export interface Course {
   id: string;
   code: string;
   title: string;
+  lectureHours: number;
+  tutorialHours: number;
+  practicalHours: number;
   credits: number;
   description: string;
   department: string;

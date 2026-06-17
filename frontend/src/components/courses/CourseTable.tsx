@@ -18,6 +18,9 @@ export function CourseTable({ courses }: CourseTableProps) {
               Course Name
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              L-T-P
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
               Credits
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
@@ -33,6 +36,10 @@ export function CourseTable({ courses }: CourseTableProps) {
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
                 {course.title}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                {course.lectureHours}-{course.tutorialHours}-
+                {course.practicalHours}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
                 {course.credits}

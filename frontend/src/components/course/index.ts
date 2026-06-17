@@ -1,1 +1,1 @@
-// TODO: Export course-related components (CourseCard, CourseDetails, etc.)
+export { CourseMeta } from "./CourseMeta";
