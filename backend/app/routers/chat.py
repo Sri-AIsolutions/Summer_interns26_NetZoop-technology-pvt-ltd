@@ -1,11 +1,11 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas import ChatRequest, ChatResponse
+from app.schemas import ChatRequest, ChatResponse, map_course_to_frontend
 from app.services.claude_service import question_to_sql, validate_sql_result
 from app.services.search_service import detect_semester_intent, get_semester_courses
 
@@ -27,10 +27,15 @@ def chat(body: ChatRequest, db: Session = Depends(get_db)):
         if prog_code:
             try:
                 courses = get_semester_courses(db, prog_code, prog_code, 2024, sem)
+                frontend_courses = [map_course_to_frontend(c) for c in courses]
+                total_credits = sum(c["credits"] for c in frontend_courses)
                 return ChatResponse(
                     answer=f"Found {len(courses)} courses in semester {sem}.",
                     source="structured_api",
-                    data=courses,
+                    courses=frontend_courses,
+                    summary={"totalCourses": len(courses), "totalCredits": total_credits},
+                    provenance=frontend_courses[0].get("provenance") if frontend_courses else None,
+                    raw_data=courses,
                 )
             except Exception:
                 logger.warning("Fast-path failed, falling back to Claude", exc_info=True)
@@ -38,7 +43,8 @@ def chat(body: ChatRequest, db: Session = Depends(get_db)):
             return ChatResponse(
                 answer=f"Which program for semester {sem}?",
                 source="structured_api",
-                data=None,
+                courses=[],
+                summary=None,
             )
 
     # ── Fallback: Claude Text-to-SQL (BE-15) ──────────────────
@@ -48,7 +54,8 @@ def chat(body: ChatRequest, db: Session = Depends(get_db)):
             answer="I couldn't understand that question. Try asking about courses, credits, or programs.",
             source="claude_text_to_sql",
             sql_query=None,
-            data=None,
+            courses=[],
+            summary=None,
         )
 
     try:
@@ -63,7 +70,9 @@ def chat(body: ChatRequest, db: Session = Depends(get_db)):
                 answer="I generated a query but it failed validation.",
                 source="claude_text_to_sql",
                 sql_query=sql,
-                data={"error": validation.get("error")},
+                courses=[],
+                summary=None,
+                raw_data={"error": validation.get("error")},
             )
 
         sanitized = validation["sanitized_data"]
@@ -72,7 +81,9 @@ def chat(body: ChatRequest, db: Session = Depends(get_db)):
             answer=answer,
             sql_query=sql,
             source="claude_text_to_sql",
-            data=sanitized,
+            courses=[],
+            summary=None,
+            raw_data=sanitized,
         )
     except Exception as exc:
         logger.error("SQL execution failed: %s", exc)
@@ -80,5 +91,7 @@ def chat(body: ChatRequest, db: Session = Depends(get_db)):
             answer="I found a possible query but it couldn't run. Try rephrasing.",
             source="claude_text_to_sql",
             sql_query=sql,
-            data={"error": str(exc)},
+            courses=[],
+            summary=None,
+            raw_data={"error": str(exc)},
         )

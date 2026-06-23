@@ -83,6 +83,46 @@ class CourseResponse(CourseBase):
     model_config = {"from_attributes": True}
 
 
+# ── Frontend-mapped Course (FIX 1) ──────────────────────────────
+
+class CourseFrontendResponse(BaseModel):
+    id: str
+    code: str
+    title: str
+    lectureHours: int = 0
+    tutorialHours: int = 0
+    practicalHours: int = 0
+    credits: float
+    description: str = ""
+    department: str
+    program: str
+    semester: int
+    category: str
+    batchYear: int
+    isActive: bool
+
+
+def map_course_to_frontend(backend_dict: dict) -> dict:
+    """Map a backend CourseResponse dict to frontend field names."""
+    provenance = backend_dict.get("provenance", {})
+    return {
+        "id": backend_dict["id"],
+        "code": backend_dict["course_code"],
+        "title": backend_dict["title"],
+        "lectureHours": backend_dict.get("l", 0),
+        "tutorialHours": backend_dict.get("t", 0),
+        "practicalHours": backend_dict.get("p", 0),
+        "credits": float(backend_dict["credits"]),
+        "description": backend_dict.get("description") or "",
+        "department": provenance.get("branch_name", ""),
+        "program": provenance.get("program_name", ""),
+        "semester": backend_dict["semester"],
+        "category": backend_dict["category"],
+        "batchYear": backend_dict["batch_year"],
+        "isActive": backend_dict.get("is_active", True),
+    }
+
+
 class CourseRelationshipResponse(BaseModel):
     prerequisites: List[CourseResponse]
     lab_companions: List[CourseResponse]
@@ -211,4 +251,7 @@ class ChatResponse(BaseModel):
     answer: str
     sql_query: Optional[str] = None
     source: str  # "structured_api" or "claude_text_to_sql"
-    data: Optional[Any] = None
+    courses: List[CourseFrontendResponse] = []
+    summary: Optional[dict] = None
+    provenance: Optional[dict] = None
+    raw_data: Optional[Any] = None

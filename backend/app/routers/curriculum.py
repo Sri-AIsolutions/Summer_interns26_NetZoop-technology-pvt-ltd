@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
@@ -13,6 +11,7 @@ from app.schemas import (
     GraduationCreditsResponse,
     MultiProgramCreditsResponse,
     SemesterCurriculumResponse,
+    map_course_to_frontend,
 )
 from app.services.search_service import (
     get_all_program_credits,
@@ -36,10 +35,10 @@ def semester_curriculum(
 ):
     """BE-04: Return all courses for a given program+branch+batch_year+semester."""
     courses = get_semester_courses(db, program, branch, batch_year, semester)
-    return SemesterCurriculumResponse(
-        semester=semester,
-        courses=[CourseResponse(**c) for c in courses],
-    )
+    return {
+        "semester": semester,
+        "courses": [map_course_to_frontend(c) for c in courses],
+    }
 
 
 @router.get("/semester/category")
@@ -53,10 +52,10 @@ def semester_by_category(
 ):
     """BE-03: Filter courses by category for a given semester."""
     courses = get_courses_by_category(db, program, branch, batch_year, semester, category)
-    return SemesterCurriculumResponse(
-        semester=semester,
-        courses=[CourseResponse(**c) for c in courses],
-    )
+    return {
+        "semester": semester,
+        "courses": [map_course_to_frontend(c) for c in courses],
+    }
 
 
 @router.get("/credits")
