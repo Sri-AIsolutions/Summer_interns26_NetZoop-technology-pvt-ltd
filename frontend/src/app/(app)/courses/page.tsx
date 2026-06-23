@@ -18,18 +18,24 @@ export default function CoursesPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const loadedPrograms = getPrograms();
-    setPrograms(loadedPrograms);
-    if (loadedPrograms.length > 0) {
-      setSelectedProgram(loadedPrograms[0].id);
-    }
+    getPrograms().then((loadedPrograms) => {
+      setPrograms(loadedPrograms);
+      if (loadedPrograms.length > 0) {
+        setSelectedProgram(loadedPrograms[0].id);
+      }
+    });
   }, []);
 
   useEffect(() => {
     if (!selectedProgram) return;
 
     setLoading(true);
-    getCoursesBySemester(selectedProgram, selectedSemester)
+    const prog = programs.find((p) => p.id === selectedProgram);
+    if (!prog) {
+      setLoading(false);
+      return;
+    }
+    getCoursesBySemester(prog.code, selectedSemester)
       .then((data) => {
         setCourses(data);
       })
@@ -39,7 +45,7 @@ export default function CoursesPage() {
       .finally(() => {
         setLoading(false);
       });
-  }, [selectedProgram, selectedSemester]);
+  }, [selectedProgram, selectedSemester, programs]);
 
   const totalCredits = courses.reduce((sum, c) => sum + c.credits, 0);
 

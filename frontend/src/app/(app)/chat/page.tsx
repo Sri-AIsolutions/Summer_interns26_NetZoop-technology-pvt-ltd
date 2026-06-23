@@ -3,112 +3,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChatMessage, TypingIndicator } from "@/components/chat/ChatMessage";
 import type { ChatMessageData, SummaryData } from "@/components/chat/ChatMessage";
-import { searchCourses } from "@/services/searchService";
-import { getCoursesBySemester } from "@/services/courseService";
+import { apiClient } from "@/services/api";
 import type { Course } from "@/types";
 
-type SearchIntent =
-  | { type: "semester"; programId: string; semester: number }
-  | { type: "credits"; programId: string }
-  | { type: "compare" }
-  | { type: "search" };
-
-function parseIntent(q: string): SearchIntent {
-  const trimmed = q.toLowerCase().trim();
-
-  const semMatch = trimmed.match(/sem(?:ester)?\s+(\d+)/i);
-  if (semMatch) {
-    const semester = parseInt(semMatch[1], 10);
-    const programId = /\bece\b/i.test(trimmed) ? "ece" : "cse";
-    return { type: "semester", programId, semester };
-  }
-
-  if (trimmed.includes("credit") || trimmed.includes("graduate")) {
-    const programId = /\bece\b/i.test(trimmed) ? "ece" : "cse";
-    return { type: "credits", programId };
-  }
-
-  if (trimmed.includes("compare") || (trimmed.includes("cse") && trimmed.includes("ece"))) {
-    return { type: "compare" };
-  }
-
-  return { type: "search" };
-}
-
-async function executeIntent(
-  intent: SearchIntent,
-  rawQuery: string
-): Promise<{ courses: Course[]; summary?: SummaryData }> {
-  switch (intent.type) {
-    case "semester": {
-      const courses = await getCoursesBySemester(intent.programId, intent.semester);
-      return { courses };
-    }
-    case "credits": {
-      const programId = intent.programId;
-      const allCourses: Course[] = [];
-      for (let sem = 1; sem <= 8; sem++) {
-        const semCourses = await getCoursesBySemester(programId, sem);
-        if (semCourses.length === 0) break;
-        allCourses.push(...semCourses);
-      }
-      const total = allCourses.reduce((sum, c) => sum + c.credits, 0);
-      const programName =
-        programId === "cse"
-          ? "B.Tech Computer Science and Engineering"
-          : "B.Tech Electronics and Communication";
-      return {
-        courses: allCourses,
-        summary: {
-          type: "credits",
-          message: `Total credits for ${programName}: ${total} (across ${allCourses.length} courses found). Data available for semesters 1\u20134.`,
-        },
-      };
-    }
-    case "compare": {
-      const [cse, ece] = await Promise.all([
-        getCoursesBySemester("cse", 1),
-        getCoursesBySemester("ece", 1),
-      ]);
-      const combined = [...cse, ...ece];
-      return {
-        courses: combined,
-        summary: {
-          type: "compare",
-          message: `Comparing CSE vs ECE \u2014 Semester 1 (${cse.length} CSE courses, ${ece.length} ECE courses).`,
-        },
-      };
-    }
-    default: {
-      const courses = await searchCourses(rawQuery);
-      if (courses.length === 0) {
-        return { courses: [], summary: { type: "info", message: `No results found for "${rawQuery}".` } };
-      }
-      return { courses };
-    }
-  }
-}
-
-function generateResponseText(
-  intent: SearchIntent,
-  courses: Course[],
-  summary?: SummaryData
-): string {
-  if (summary) return "";
-
-  if (courses.length === 0) return "No courses matched your query.";
-
-  if (intent.type === "semester") {
-    const programLabel = intent.programId === "cse" ? "CSE" : "ECE";
-    return `Here are the Semester ${intent.semester} courses for ${programLabel}:`;
-  }
-
-  if (courses.length === 1) {
-    const c = courses[0];
-    return `${c.code}: ${c.title} \u2014 ${c.credits} credits, Semester ${c.semester}, ${c.category}.`;
-  }
-
-  return `Found ${courses.length} matching courses:`;
+interface ChatApiResponse {
+  answer: string;
+  source: string;
+  courses: Course[];
+  summary: { totalCourses: number; totalCredits: number } | null;
+  raw_data: unknown;
 }
 
 let messageIdCounter = 0;
@@ -122,7 +25,7 @@ export default function ChatPage() {
     {
       id: nextId(),
       role: "assistant",
-      text: "Hello! I\u2019m your curriculum assistant. Ask me about courses, credits, electives, or semester details.",
+      text: "Hello! I'm your curriculum assistant. Ask me about courses, credits, electives, or semester details.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -151,20 +54,26 @@ export default function ChatPage() {
       text,
     };
     setMessages((prev) => [...prev, userMessage]);
-
     setIsTyping(true);
 
     try {
-      const intent = parseIntent(text);
-      const { courses, summary } = await executeIntent(intent, text);
-      const responseText = generateResponseText(intent, courses, summary);
+      const response = await apiClient.post<ChatApiResponse>("/api/chat", {
+        message: text,
+      });
+
+      const summaryData: SummaryData | undefined = response.summary
+        ? {
+            type: "info",
+            message: `${response.summary.totalCourses} courses, ${response.summary.totalCredits} total credits`,
+          }
+        : undefined;
 
       const assistantMessage: ChatMessageData = {
         id: nextId(),
         role: "assistant",
-        text: responseText,
-        courses,
-        summary,
+        text: response.answer,
+        courses: response.courses.length > 0 ? response.courses : undefined,
+        summary: summaryData,
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch {

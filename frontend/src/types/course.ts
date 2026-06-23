@@ -19,7 +19,7 @@ export interface Program {
   id: string;
   name: string;
   code: string;
-  duration: number;
+  duration_years: number;
 }
 
 export interface Department {

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { SearchBar } from "@/components/home/SearchBar";
 import { SuggestedSearches } from "@/components/home/SuggestedSearches";
 import { CoursePreviewGrid } from "@/components/home/CoursePreviewGrid";
 import { searchCourses } from "@/services/searchService";
-import { getCoursesBySemester } from "@/services/courseService";
-import { mockCoursesData } from "@/data/mockCourses";
+import { getCoursesBySemester, getAllCoursesForProgram, getPreviewCourses } from "@/services/courseService";
 import type { Course } from "@/types";
 
 interface SummaryData {
@@ -66,12 +65,7 @@ async function searchOrRoute(
     }
     case "credits": {
       const programId = intent.programId;
-      const allCourses: Course[] = [];
-      for (let sem = 1; sem <= 8; sem++) {
-        const semCourses = await getCoursesBySemester(programId, sem);
-        if (semCourses.length === 0) break;
-        allCourses.push(...semCourses);
-      }
+      const allCourses = await getAllCoursesForProgram(programId);
       const total = allCourses.reduce((sum, c) => sum + c.credits, 0);
       const programName =
         programId === "cse"
@@ -81,7 +75,7 @@ async function searchOrRoute(
         courses: allCourses,
         summary: {
           type: "credits",
-          message: `Total credits for ${programName}: ${total} (across ${allCourses.length} courses, semesters 1\u20134).`,
+          message: `Total credits for ${programName}: ${total} (across ${allCourses.length} courses).`,
         },
       };
     }
@@ -94,11 +88,13 @@ async function searchOrRoute(
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Course[]>(
-    mockCoursesData.slice(0, 6)
-  );
+  const [results, setResults] = useState<Course[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [summary, setSummary] = useState<SummaryData | undefined>(undefined);
+
+  useEffect(() => {
+    getPreviewCourses("BTECH", "CSE", 2023, 6).then(setResults).catch(() => {});
+  }, []);
 
   const handleSearch = useCallback(async () => {
     if (!query.trim()) return;

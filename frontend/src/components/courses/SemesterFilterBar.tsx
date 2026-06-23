@@ -16,8 +16,11 @@ export function SemesterFilterBar({
   onSemesterChange,
 }: SemesterFilterBarProps) {
   const selectedProgramObj = programs.find((p) => p.id === selectedProgram);
-  const semesters = selectedProgramObj
-    ? Array.from({ length: selectedProgramObj.duration }, (_, i) => i + 1)
+  const semesterCount = selectedProgramObj
+    ? selectedProgramObj.duration_years * 2
+    : 0;
+  const semesters = semesterCount
+    ? Array.from({ length: semesterCount }, (_, i) => i + 1)
     : [];
 
   return (
