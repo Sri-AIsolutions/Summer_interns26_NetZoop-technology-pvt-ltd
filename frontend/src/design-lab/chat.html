@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Amrita Curriculum Assistant | AI Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Public+Sans:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Public+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+                brand: {
+                    50: '#fff0f3',
+                    100: '#ffdee6',
+                    200: '#ffc2cf',
+                    300: '#ff97ae',
+                    400: '#ff5e85',
+                    500: '#f62d5f',
+                    600: '#e1134a',
+                    700: '#b50346',
+                    800: '#9b083f',
+                    900: '#840c3a',
+                }
+            },
+            borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            fontFamily: {
+                    "headline": ["Inter"],
+                    "display": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Public Sans"]
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes dot-pulse {
+            0%, 100% { transform: translateY(0); opacity: 0.4; }
+            50% { transform: translateY(-4px); opacity: 1; }
+        }
+        .dot-1 { animation: dot-pulse 1s infinite 0s; }
+        .dot-2 { animation: dot-pulse 1s infinite 0.2s; }
+        .dot-3 { animation: dot-pulse 1s infinite 0.4s; }
+        
+        .chat-container {
+            height: calc(100vh - 64px); /* TopNavBar height subtraction */
+        }
+    </style>
+</head>
+<body class="bg-neutral-50 font-body text-neutral-900 overflow-hidden">
+<!-- Top Navigation Bar (Shared Component) -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md shadow-sm border-b border-neutral-100 dark:border-neutral-800 flex justify-between items-center px-8 h-16 max-w-full mx-auto">
+<div class="text-xl font-black text-[#b50346] tracking-tighter">
+            Amrita Curriculum Assistant
+        </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Home</a>
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Courses</a>
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Search</a>
+<a class="text-[#b50346] font-bold border-b-2 border-[#b50346] pb-1" href="#">Chat</a>
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Compare</a>
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Admin</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-5 py-2 rounded-full bg-[#b50346] text-white font-bold text-sm transition-all duration-200 active:scale-95">Sign In</button>
+</div>
+</nav>
+<main class="pt-16 flex chat-container overflow-hidden">
+<!-- Left Sidebar (280px) -->
+<aside class="w-[280px] hidden md:flex flex-col bg-white border-r border-neutral-100 h-full">
+<div class="p-4 space-y-4 flex flex-col h-full">
+<!-- New Chat Button -->
+<button class="w-full py-3 px-4 border-2 border-dashed border-neutral-200 rounded-xl flex items-center justify-center gap-2 text-neutral-500 hover:border-brand-700 hover:text-brand-700 transition-all group">
+<span class="material-symbols-outlined text-xl">add</span>
+<span class="font-semibold text-sm">New Chat</span>
+</button>
+<!-- Conversations History -->
+<div class="flex-1 flex flex-col items-center justify-center text-center px-6">
+<span class="material-symbols-outlined text-4xl text-neutral-200 mb-2">forum</span>
+<p class="text-xs text-neutral-400 leading-relaxed">Conversations appear here</p>
+</div>
+<!-- User Account Summary (Bottom of Sidebar) -->
+<div class="pt-4 border-t border-neutral-50">
+<div class="flex items-center gap-3 p-2 hover:bg-neutral-50 rounded-lg cursor-pointer transition-colors">
+<img class="w-8 h-8 rounded-full border border-neutral-200" data-alt="A close-up portrait of a professional university student smiling subtly, with a clean campus background blurred in the distance. The lighting is warm and academic, with soft natural light highlighting facial features. Professional high-key photography style with a focus on a minimal, clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_0oncE_zaLYT-ugzuJ65qpMpfXjHJDsFv8Up2Fu-RPZ1YIqLezDCInV1JdXRei9y7VDfUT-Sc6okne65M379beJ2wtFQoE8y50lyFO83IS7ol9w9IxGvGi3uCn-vi2YyfeTqVduKlWXvZi8VOieIj3kObnxMqV6UHVibb__ln7MCEt9U1Tm5avcqfy4Ohiyv3tz7OY2XNwzfMtFwmFrsfshbai1XBb0OLGCQfcilH-_atxN6B15z-7UIPEHNwi9CR-S29eN9xc74"/>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-neutral-800">Student Account</span>
+<span class="text-[10px] text-neutral-500">B.Tech CSE - Yr 3</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Chat Area -->
+<section class="flex-1 flex flex-col relative bg-neutral-50">
+<!-- Chat Header -->
+<header class="h-14 bg-white/50 backdrop-blur-sm px-6 flex items-center justify-between border-b border-neutral-100 z-10">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-neutral-500">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline font-bold text-neutral-800 tracking-tight">Chat</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-neutral-400 hover:text-brand-700 transition-colors">
+<span class="material-symbols-outlined text-xl">share</span>
+</button>
+<button class="p-2 text-neutral-400 hover:text-brand-700 transition-colors">
+<span class="material-symbols-outlined text-xl">settings</span>
+</button>
+</div>
+</header>
+<!-- Message Area -->
+<div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scrollbar-hide">
+<!-- Welcome State / Suggested Prompts -->
+<div class="max-w-3xl mx-auto flex flex-col items-center justify-center pt-12 text-center">
+<div class="w-16 h-16 bg-brand-50 rounded-2xl flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-brand-700 text-3xl">school</span>
+</div>
+<h2 class="text-2xl font-bold text-neutral-800 mb-2">How can I assist your curriculum planning?</h2>
+<p class="text-neutral-500 text-sm mb-10 max-w-md">I can help you analyze course structures, compare credits, and explore electives across all Amrita departments.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
+<button class="p-4 text-left border border-neutral-200 bg-white rounded-xl hover:border-brand-300 hover:bg-brand-50 transition-all text-sm font-medium text-neutral-700 flex items-center justify-between group">
+                            What courses are in Semester 3?
+                            <span class="material-symbols-outlined text-neutral-300 group-hover:text-brand-700 transition-colors">arrow_forward</span>
+</button>
+<button class="p-4 text-left border border-neutral-200 bg-white rounded-xl hover:border-brand-300 hover:bg-brand-50 transition-all text-sm font-medium text-neutral-700 flex items-center justify-between group">
+                            Show me CSE electives
+                            <span class="material-symbols-outlined text-neutral-300 group-hover:text-brand-700 transition-colors">arrow_forward</span>
+</button>
+<button class="p-4 text-left border border-neutral-200 bg-white rounded-xl hover:border-brand-300 hover:bg-brand-50 transition-all text-sm font-medium text-neutral-700 flex items-center justify-between group">
+                            How many credits for ECE?
+                            <span class="material-symbols-outlined text-neutral-300 group-hover:text-brand-700 transition-colors">arrow_forward</span>
+</button>
+<button class="p-4 text-left border border-neutral-200 bg-white rounded-xl hover:border-brand-300 hover:bg-brand-50 transition-all text-sm font-medium text-neutral-700 flex items-center justify-between group">
+                            Compare CSE vs ECE
+                            <span class="material-symbols-outlined text-neutral-300 group-hover:text-brand-700 transition-colors">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Example Conversation -->
+<div class="max-w-3xl mx-auto space-y-8">
+<!-- Assistant Message with Credit Summary -->
+<div class="flex gap-4">
+<div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center shrink-0">
+<span class="text-[10px] font-bold text-brand-700">AI</span>
+</div>
+<div class="flex flex-col gap-3">
+<span class="text-xs font-bold text-neutral-400 tracking-wider">ASSISTANT</span>
+<div class="p-5 bg-white border border-neutral-100 rounded-2xl rounded-tl-none shadow-sm text-neutral-800 leading-relaxed max-w-2xl">
+                                Hello! I've analyzed the current curriculum for the 2024 academic cycle. Here's a summary of the credit distribution for Semester 3 of the Computer Science program.
+                            </div>
+<!-- Summary Banner: Credits -->
+<div class="bg-brand-50 p-4 rounded-xl border border-brand-100 flex items-center gap-4 max-w-xl">
+<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-brand-700 shadow-sm shrink-0">
+<span class="material-symbols-outlined">calculate</span>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-brand-900">Total Credits: 22</h4>
+<p class="text-xs text-brand-700 opacity-80">4 Core Courses, 2 Labs, 1 Humanities Elective.</p>
+</div>
+<span class="material-symbols-outlined text-brand-300">info</span>
+</div>
+<!-- Course Result Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl">
+<div class="p-3 bg-white border border-neutral-200 rounded-lg hover:border-brand-200 transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded uppercase">Core</span>
+<span class="text-xs font-bold text-neutral-800">4 Cr</span>
+</div>
+<h5 class="text-sm font-bold text-neutral-800 group-hover:text-brand-700">Data Structures</h5>
+<p class="text-[11px] text-neutral-500">19CSE201 • Theory + Lab</p>
+</div>
+<div class="p-3 bg-white border border-neutral-200 rounded-lg hover:border-brand-200 transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded uppercase">Core</span>
+<span class="text-xs font-bold text-neutral-800">3 Cr</span>
+</div>
+<h5 class="text-sm font-bold text-neutral-800 group-hover:text-brand-700">Discrete Mathematics</h5>
+<p class="text-[11px] text-neutral-500">19MAT205 • Pure Theory</p>
+</div>
+</div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex justify-end">
+<div class="p-4 bg-[#b50346] text-white rounded-2xl rounded-tr-none max-w-xl shadow-md text-sm leading-relaxed">
+                            Could you compare the depth of AI electives between CSE and ECE? I'm trying to decide my stream specialization for next year.
+                        </div>
+</div>
+<!-- Assistant Message with Comparison -->
+<div class="flex gap-4">
+<div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center shrink-0">
+<span class="text-[10px] font-bold text-brand-700">AI</span>
+</div>
+<div class="flex flex-col gap-3 w-full">
+<span class="text-xs font-bold text-neutral-400 tracking-wider">ASSISTANT</span>
+<!-- Summary Banner: Comparison -->
+<div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex items-center gap-4 max-w-xl">
+<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-indigo-600 shadow-sm shrink-0">
+<span class="material-symbols-outlined">compare_arrows</span>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-indigo-900">Stream Comparison: AI Track</h4>
+<p class="text-xs text-indigo-700 opacity-80">CSE focuses on algorithms/SW, ECE on edge computing/HW.</p>
+</div>
+</div>
+<div class="p-5 bg-white border border-neutral-100 rounded-2xl rounded-tl-none shadow-sm text-neutral-800 leading-relaxed max-w-2xl">
+                                For AI-specific goals, CSE offers 8 distinct electives ranging from NLP to Computer Vision. ECE includes 5 electives, primarily focusing on "Signal Processing for AI" and "Embedded Machine Learning."
+                            </div>
+</div>
+</div>
+<!-- Typing Indicator -->
+<div class="flex gap-4 items-center animate-fade-in">
+<div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center shrink-0">
+<span class="text-[10px] font-bold text-brand-700">AI</span>
+</div>
+<div class="flex gap-1.5 py-2 px-3 bg-white rounded-full border border-neutral-100">
+<div class="w-1.5 h-1.5 rounded-full bg-brand-700 dot-1"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-brand-700 dot-2"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-brand-700 dot-3"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Input Area -->
+<div class="p-4 md:p-8 bg-gradient-to-t from-neutral-50 via-neutral-50/90 to-transparent">
+<div class="max-w-3xl mx-auto relative">
+<div class="relative flex flex-col bg-white border border-neutral-200 rounded-2xl shadow-xl shadow-neutral-200/50 overflow-hidden focus-within:ring-2 focus-within:ring-brand-700/20 focus-within:border-brand-700 transition-all">
+<textarea class="w-full p-4 pr-16 bg-transparent border-none focus:ring-0 resize-none text-sm placeholder:text-neutral-400 min-h-[56px] max-h-[200px]" placeholder="Ask about courses..." rows="1"></textarea>
+<div class="flex items-center justify-between px-4 py-2 bg-neutral-50/50 border-t border-neutral-100">
+<p class="text-[10px] text-neutral-400 font-medium">Press Enter to send, Shift+Enter for new line</p>
+<div class="flex items-center gap-2">
+<button class="p-1.5 text-neutral-400 hover:text-brand-700 transition-colors">
+<span class="material-symbols-outlined text-xl">attach_file</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-brand-700 text-white flex items-center justify-center hover:bg-brand-800 transition-colors active:scale-95">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) - Rendered only at bottom if scrolled or as a floating micro-footer -->
+<!-- For a chat app, we often keep it very minimal or omit the full footer to maximize canvas. 
+         But per instruction, we include it styled appropriately. -->
+<footer class="bg-white border-t border-neutral-100 flex flex-col md:flex-row justify-between items-center px-8 py-4 w-full z-10 relative">
+<div class="font-headline font-bold text-[#b50346] text-xs">
+            Amrita Curriculum Assistant
+        </div>
+<div class="font-body text-[10px] text-neutral-400 uppercase tracking-widest mt-2 md:mt-0">
+            © 2024 AI-Powered Academic Planning
+        </div>
+<div class="flex gap-6 mt-2 md:mt-0">
+<a class="text-[10px] text-neutral-400 hover:text-[#b50346] hover:underline transition-all" href="#">Privacy Policy</a>
+<a class="text-[10px] text-neutral-400 hover:text-[#b50346] hover:underline transition-all" href="#">Terms of Service</a>
+<a class="text-[10px] text-neutral-400 hover:text-[#b50346] hover:underline transition-all" href="#">Contact Support</a>
+</div>
+</footer>
+<script>
+        // Simple auto-resize for textarea
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Focus textarea on load
+        window.addEventListener('DOMContentLoaded', () => {
+            textarea.focus();
+        });
+    </script>
+</body></html>

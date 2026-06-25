@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { SearchBar } from "@/components/home/SearchBar";
 import { SuggestedSearches } from "@/components/home/SuggestedSearches";
 import { CoursePreviewGrid } from "@/components/home/CoursePreviewGrid";
+import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { searchCourses } from "@/services/searchService";
 import { getCoursesBySemester } from "@/services/courseService";
 import { mockCoursesData } from "@/data/mockCourses";
@@ -144,6 +145,7 @@ export default function HomePage() {
         searchTerm={query}
         summary={summary}
       />
+      {!hasSearched && <FeaturesSection />}
     </div>
   );
 }

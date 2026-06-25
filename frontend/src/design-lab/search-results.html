@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Search Results | Amrita Curriculum Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Public+Sans:wght@400;500;600&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#b50346",
+                        "primary-light": "#fdf2f7",
+                        "primary-muted": "#fae6ee",
+                        brand: {
+                            100: "#fae6ee",
+                            500: "#b50346",
+                            600: "#940239"
+                        }
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Inter", "sans-serif"],
+                        display: ["Inter", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #f7f7f7 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .course-card {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(181, 3, 70, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-[#fafafa] font-body text-neutral-900 antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md shadow-sm border-b border-neutral-100 dark:border-neutral-800 transition-all duration-200">
+<div class="flex justify-between items-center px-8 h-16 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black text-[#b50346] tracking-tighter">Amrita Curriculum Assistant</span>
+<div class="hidden md:flex gap-6">
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Home</a>
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Courses</a>
+<a class="text-[#b50346] font-bold border-b-2 border-[#b50346] pb-1" href="#">Search</a>
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Chat</a>
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Compare</a>
+<a class="text-neutral-600 dark:text-neutral-400 font-medium hover:text-[#b50346] transition-colors" href="#">Admin</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-5 py-2 rounded-full bg-[#b50346] text-white font-bold text-sm hover:bg-[#940239] transition-all duration-200 active:scale-95">Sign In</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-32 pb-20 px-6 max-w-6xl mx-auto w-full">
+<!-- Header Section -->
+<header class="text-center mb-12">
+<h1 class="text-4xl font-headline font-extrabold tracking-tight text-neutral-900 mb-3">Search Courses</h1>
+<p class="text-neutral-500 font-medium">Search by course code or name across all departments</p>
+</header>
+<!-- Search Bar Section -->
+<div class="relative max-w-3xl mx-auto mb-16">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-neutral-400 group-focus-within:text-[#b50346] transition-colors">search</span>
+</div>
+<input class="w-full bg-white pl-12 pr-12 py-5 rounded-xl border border-neutral-200 shadow-sm focus:ring-2 focus:ring-[#b50346] focus:border-[#b50346] transition-all text-lg font-medium text-neutral-800 placeholder:text-neutral-400" placeholder="Search by course code or name..." type="text" value="Data Structures"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<!-- Search Results State Toggles (Simulation Controls - Not for final UI but kept for functionality) -->
+<div id="results-view">
+<!-- Exact Matches -->
+<section class="mb-16">
+<div class="flex items-center gap-2 mb-6">
+<div class="h-6 w-1 bg-[#b50346] rounded-full"></div>
+<h2 class="text-xl font-bold tracking-tight text-neutral-800">Exact Matches</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Course Card 1 -->
+<div class="course-card bg-white rounded-xl border border-neutral-100 border-t-4 border-t-[#b50346] p-6 flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-sm font-bold text-[#b50346]">19CSE201</span>
+<span class="px-3 py-1 rounded-full bg-primary-light text-[#b50346] text-xs font-bold uppercase tracking-wider">Core</span>
+</div>
+<h3 class="text-xl font-bold text-neutral-900 mb-2">
+<span class="bg-brand-100">Data Structures</span> and Algorithms
+                        </h3>
+<p class="text-sm text-neutral-500 mb-4 flex-grow">A fundamental course covering linear and non-linear structures, complexity analysis, and sorting/searching techniques.</p>
+<div class="flex flex-wrap gap-4 items-center text-xs font-medium text-neutral-600 border-t border-neutral-50 pt-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">analytics</span>
+                                L-T-P: 3-0-2
+                            </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">school</span>
+                                Credits: 4
+                            </div>
+<div class="flex items-center gap-1 ml-auto">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+                                Sem 3
+                            </div>
+</div>
+<div class="mt-3 text-[11px] text-neutral-400 font-label uppercase tracking-widest">B.Tech Computer Science &amp; Engineering</div>
+</div>
+<!-- Course Card 2 -->
+<div class="course-card bg-white rounded-xl border border-neutral-100 border-t-4 border-t-[#b50346] p-6 flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-sm font-bold text-[#b50346]">19CSE312</span>
+<span class="px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold uppercase tracking-wider">Lab</span>
+</div>
+<h3 class="text-xl font-bold text-neutral-900 mb-2">
+                            Advanced <span class="bg-brand-100">Data Structures</span> Lab
+                        </h3>
+<p class="text-sm text-neutral-500 mb-4 flex-grow">Hands-on implementation of advanced graph algorithms, hashing techniques, and memory management optimization.</p>
+<div class="flex flex-wrap gap-4 items-center text-xs font-medium text-neutral-600 border-t border-neutral-50 pt-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">analytics</span>
+                                L-T-P: 0-0-3
+                            </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">school</span>
+                                Credits: 1.5
+                            </div>
+<div class="flex items-center gap-1 ml-auto">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+                                Sem 4
+                            </div>
+</div>
+<div class="mt-3 text-[11px] text-neutral-400 font-label uppercase tracking-widest">B.Tech Artificial Intelligence</div>
+</div>
+</div>
+</section>
+<!-- Related Results -->
+<section>
+<div class="flex items-center gap-2 mb-6">
+<div class="h-6 w-1 bg-neutral-300 rounded-full"></div>
+<h2 class="text-xl font-bold tracking-tight text-neutral-500">Related Results</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-85">
+<!-- Related Card 1 -->
+<div class="course-card bg-neutral-50 rounded-xl border border-neutral-200 border-t-4 border-t-neutral-300 p-6 flex flex-col h-full grayscale-[0.5] hover:grayscale-0 transition-all">
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-sm font-bold text-neutral-500">19MAT205</span>
+<span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold uppercase tracking-wider">Elective</span>
+</div>
+<h3 class="text-xl font-bold text-neutral-700 mb-2">Discrete Mathematics</h3>
+<p class="text-sm text-neutral-500 mb-4 flex-grow">Mathematical foundations for computer science including set theory, logic, and graph theory essential for understanding data storage.</p>
+<div class="flex flex-wrap gap-4 items-center text-xs font-medium text-neutral-500 border-t border-neutral-200/50 pt-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">analytics</span>
+                                L-T-P: 3-1-0
+                            </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">school</span>
+                                Credits: 4
+                            </div>
+<div class="flex items-center gap-1 ml-auto">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+                                Sem 3
+                            </div>
+</div>
+<div class="mt-3 text-[11px] text-neutral-400 font-label uppercase tracking-widest">Mathematics Department</div>
+</div>
+<!-- Related Card 2 -->
+<div class="course-card bg-neutral-50 rounded-xl border border-neutral-200 border-t-4 border-t-neutral-300 p-6 flex flex-col h-full grayscale-[0.5] hover:grayscale-0 transition-all">
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-sm font-bold text-neutral-500">19CSE102</span>
+<span class="px-3 py-1 rounded-full bg-primary-light text-[#b50346] text-xs font-bold uppercase tracking-wider">Core</span>
+</div>
+<h3 class="text-xl font-bold text-neutral-700 mb-2">Computer Programming</h3>
+<p class="text-sm text-neutral-500 mb-4 flex-grow">Introduction to programming logic and fundamental data types that serve as prerequisites for complex structures.</p>
+<div class="flex flex-wrap gap-4 items-center text-xs font-medium text-neutral-500 border-t border-neutral-200/50 pt-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">analytics</span>
+                                L-T-P: 2-0-3
+                            </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">school</span>
+                                Credits: 4
+                            </div>
+<div class="flex items-center gap-1 ml-auto">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+                                Sem 1
+                            </div>
+</div>
+<div class="mt-3 text-[11px] text-neutral-400 font-label uppercase tracking-widest">B.Tech Engineering First Year</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Loading State (Hidden by default) -->
+<div class="hidden" id="loading-state">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white border border-neutral-100 rounded-xl p-6 space-y-4">
+<div class="h-4 w-24 skeleton rounded"></div>
+<div class="h-8 w-3/4 skeleton rounded"></div>
+<div class="h-20 w-full skeleton rounded"></div>
+<div class="h-4 w-full skeleton rounded"></div>
+</div>
+<div class="bg-white border border-neutral-100 rounded-xl p-6 space-y-4">
+<div class="h-4 w-24 skeleton rounded"></div>
+<div class="h-8 w-3/4 skeleton rounded"></div>
+<div class="h-20 w-full skeleton rounded"></div>
+<div class="h-4 w-full skeleton rounded"></div>
+</div>
+<div class="bg-white border border-neutral-100 rounded-xl p-6 space-y-4">
+<div class="h-4 w-24 skeleton rounded"></div>
+<div class="h-8 w-3/4 skeleton rounded"></div>
+<div class="h-20 w-full skeleton rounded"></div>
+<div class="h-4 w-full skeleton rounded"></div>
+</div>
+<div class="bg-white border border-neutral-100 rounded-xl p-6 space-y-4">
+<div class="h-4 w-24 skeleton rounded"></div>
+<div class="h-8 w-3/4 skeleton rounded"></div>
+<div class="h-20 w-full skeleton rounded"></div>
+<div class="h-4 w-full skeleton rounded"></div>
+</div>
+</div>
+</div>
+<!-- Empty State (Hidden by default) -->
+<div class="hidden flex flex-col items-center justify-center py-24 text-center" id="empty-state">
+<div class="bg-slate-100 p-8 rounded-full mb-6">
+<span class="material-symbols-outlined text-6xl text-slate-300">search_off</span>
+</div>
+<h2 class="text-2xl font-bold text-neutral-800 mb-2">No courses found</h2>
+<p class="text-neutral-500 mb-8 max-w-sm">We couldn't find any courses matching your search. Try a different search term or check for typos.</p>
+<button class="text-[#b50346] font-bold hover:underline" onclick="resetSearch()">Clear all filters</button>
+</div>
+<!-- State Control Toggles (Development Only Visual) -->
+<div class="fixed bottom-24 right-8 flex flex-col gap-2 z-40 opacity-20 hover:opacity-100 transition-opacity">
+<button class="bg-white px-3 py-1 text-xs border border-neutral-200 rounded shadow-sm" onclick="toggleState('results')">Show Results</button>
+<button class="bg-white px-3 py-1 text-xs border border-neutral-200 rounded shadow-sm" onclick="toggleState('loading')">Show Loading</button>
+<button class="bg-white px-3 py-1 text-xs border border-neutral-200 rounded shadow-sm" onclick="toggleState('empty')">Show Empty</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-neutral-900 border-t border-neutral-100 dark:border-neutral-800">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full max-w-7xl mx-auto">
+<div class="mb-6 md:mb-0">
+<span class="font-headline font-bold text-[#b50346] text-lg">Amrita Curriculum Assistant</span>
+<p class="font-body text-sm text-neutral-500 mt-2">© 2024 Amrita Curriculum Assistant. AI-Powered Academic Planning.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-sm text-neutral-400 hover:text-[#b50346] hover:underline transition-colors" href="#">Privacy Policy</a>
+<a class="text-sm text-neutral-400 hover:text-[#b50346] hover:underline transition-colors" href="#">Terms of Service</a>
+<a class="text-sm text-neutral-400 hover:text-[#b50346] hover:underline transition-colors" href="#">Contact Support</a>
+</div>
+</div>
+</footer>
+<script>
+        function toggleState(state) {
+            const results = document.getElementById('results-view');
+            const loading = document.getElementById('loading-state');
+            const empty = document.getElementById('empty-state');
+
+            results.classList.add('hidden');
+            loading.classList.add('hidden');
+            empty.classList.add('hidden');
+
+            if (state === 'results') results.classList.remove('hidden');
+            if (state === 'loading') loading.classList.remove('hidden');
+            if (state === 'empty') empty.classList.remove('hidden');
+        }
+
+        function resetSearch() {
+            document.querySelector('input').value = '';
+            toggleState('results');
+        }
+
+        // Simple interactive search highlight simulation
+        const searchInput = document.querySelector('input');
+        searchInput.addEventListener('input', (e) => {
+            if (e.target.value.length > 10) {
+                toggleState('loading');
+                setTimeout(() => toggleState('empty'), 1000);
+            } else if (e.target.value.length === 0) {
+                toggleState('empty');
+            } else {
+                toggleState('results');
+            }
+        });
+    </script>
+</body></html>

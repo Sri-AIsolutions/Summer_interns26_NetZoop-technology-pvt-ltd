@@ -42,3 +42,27 @@ export function Loading({ size = "md", label = "Loading..." }: LoadingProps) {
     </div>
   );
 }
+
+export function Skeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn("animate-pulse rounded-md bg-slate-200", className)}
+      aria-hidden="true"
+    />
+  );
+}
+
+export function CardSkeleton() {
+  return (
+    <div className="animate-pulse rounded-card border border-slate-200 bg-white p-5">
+      <Skeleton className="mb-3 h-4 w-20" />
+      <Skeleton className="mb-2 h-5 w-3/4" />
+      <div className="mt-3 flex gap-4">
+        <Skeleton className="h-3 w-16" />
+        <Skeleton className="h-3 w-12" />
+        <Skeleton className="h-3 w-20" />
+      </div>
+      <Skeleton className="mt-3 h-3 w-full" />
+    </div>
+  );
+}

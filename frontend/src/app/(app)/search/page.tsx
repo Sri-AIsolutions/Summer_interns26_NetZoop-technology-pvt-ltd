@@ -10,6 +10,12 @@ import { searchCourses, getSuggestions } from "@/services/searchService";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { Course } from "@/types";
 
+const searchOffIcon = (
+  <svg className="mb-4 h-14 w-14 text-slate-300" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM13.5 10.5h-6" />
+  </svg>
+);
+
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Course[]>([]);
@@ -70,12 +76,14 @@ export default function SearchPage() {
           <EmptyState
             title="No courses found"
             message={`No results for "${debouncedQuery}". Try one of the suggestions above.`}
+            icon={searchOffIcon}
           />
         </>
       ) : hasSearched && results.length === 0 ? (
         <EmptyState
           title="No courses found"
           message={`No results for "${debouncedQuery}". Try a different search term.`}
+          icon={searchOffIcon}
         />
       ) : hasSearched ? (
         <SearchResults results={results} query={debouncedQuery} />

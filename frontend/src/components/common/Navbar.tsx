@@ -28,10 +28,7 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link
-            href={ROUTES.home}
-            className="flex items-center gap-2.5"
-          >
+          <Link href={ROUTES.home} className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-xs font-bold text-white">
               A
             </span>
@@ -43,10 +40,33 @@ export function Navbar() {
             </span>
           </Link>
 
+          <div className="hidden md:flex md:items-center md:space-x-0.5">
+            {navLinks.map((link) => {
+              const active = isActive(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "relative rounded-button px-3 py-2 text-sm font-medium transition-colors focus-ring",
+                    active
+                      ? "text-brand-600"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  )}
+                >
+                  {link.label}
+                  {active && (
+                    <span className="absolute bottom-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-brand-500" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
           <button
             type="button"
             onClick={() => setMobileOpen((prev) => !prev)}
-            className="inline-flex items-center justify-center rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 md:hidden"
+            className="inline-flex items-center justify-center rounded-button p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 md:hidden focus-ring"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
@@ -61,47 +81,37 @@ export function Navbar() {
               </svg>
             )}
           </button>
-
-          <div className="hidden md:flex md:items-center md:space-x-0.5">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  isActive(pathname, link.href)
-                    ? "text-brand-600"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
 
-      {mobileOpen && (
-        <div id="mobile-menu" className="border-t border-slate-200 md:hidden">
-          <div className="space-y-1 px-4 pb-3 pt-2">
-            {navLinks.map((link) => (
+      <div
+        id="mobile-menu"
+        className={cn(
+          "overflow-hidden border-t border-slate-200 transition-all duration-200 ease-in-out md:hidden",
+          mobileOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+        )}
+      >
+        <div className="space-y-1 px-4 pb-3 pt-2">
+          {navLinks.map((link) => {
+            const active = isActive(pathname, link.href);
+            return (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "block rounded-md px-3 py-2 text-base font-medium transition-colors",
-                  isActive(pathname, link.href)
-                    ? "text-brand-600"
+                  "block rounded-button px-3 py-2 text-base font-medium transition-colors focus-ring",
+                  active
+                    ? "bg-brand-50 text-brand-600"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 )}
               >
                 {link.label}
               </Link>
-            ))}
-          </div>
+            );
+          })}
         </div>
-      )}
+      </div>
     </nav>
   );
 }

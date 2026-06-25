@@ -1,9 +1,48 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-slate-50 text-slate-900 antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-500/20 text-brand-900;
+  }
+}
+
+@layer components {
+  .text-display {
+    @apply text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl;
+  }
+
+  .text-heading {
+    @apply text-2xl font-bold tracking-tight sm:text-3xl;
+  }
+
+  .text-subheading {
+    @apply text-lg font-semibold text-slate-900;
+  }
+
+  .text-body {
+    @apply text-base leading-relaxed text-slate-600;
+  }
+
+  .text-caption {
+    @apply text-sm text-slate-500;
+  }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
   }
 }
