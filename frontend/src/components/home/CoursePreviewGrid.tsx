@@ -1,5 +1,6 @@
 "use client";
 
+import { forwardRef } from "react";
 import Link from "next/link";
 import type { Course } from "@/types";
 import { CourseCategoryBadge } from "@/components/courses/CourseCategoryBadge";
@@ -17,16 +18,18 @@ interface CoursePreviewGridProps {
   summary?: SummaryData;
 }
 
-export function CoursePreviewGrid({
-  courses,
-  hasSearched,
-  searchTerm,
-  summary,
-}: CoursePreviewGridProps) {
-  if (!hasSearched && courses.length === 0) return null;
+export const CoursePreviewGrid = forwardRef<HTMLElement, CoursePreviewGridProps>(
+  function CoursePreviewGrid(
+    { courses, hasSearched, searchTerm, summary },
+    ref
+  ) {
+    if (!hasSearched && courses.length === 0) return null;
 
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    return (
+      <section
+        ref={ref}
+        className="mx-auto max-w-7xl scroll-mt-16 px-4 py-12 sm:px-6 lg:px-8 animate-fadeSlideIn"
+      >
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900">
@@ -128,4 +131,4 @@ export function CoursePreviewGrid({
       )}
     </section>
   );
-}
+});

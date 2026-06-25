@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { SearchBar } from "@/components/home/SearchBar";
 import { SuggestedSearches } from "@/components/home/SuggestedSearches";
@@ -99,6 +99,13 @@ export default function HomePage() {
   );
   const [hasSearched, setHasSearched] = useState(false);
   const [summary, setSummary] = useState<SummaryData | undefined>(undefined);
+  const resultsRef = useRef<HTMLElement>(null);
+
+  const scrollToResults = () => {
+    requestAnimationFrame(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
 
   const handleSearch = useCallback(async () => {
     if (!query.trim()) return;
@@ -106,6 +113,7 @@ export default function HomePage() {
     setResults(courses);
     setSummary(sum);
     setHasSearched(true);
+    scrollToResults();
   }, [query]);
 
   const handleSelect = useCallback(async (value: string) => {
@@ -114,6 +122,7 @@ export default function HomePage() {
     setResults(courses);
     setSummary(sum);
     setHasSearched(true);
+    scrollToResults();
   }, []);
 
   return (
@@ -129,6 +138,7 @@ export default function HomePage() {
         </div>
       </HeroSection>
       <CoursePreviewGrid
+        ref={resultsRef}
         courses={results}
         hasSearched={hasSearched}
         searchTerm={query}

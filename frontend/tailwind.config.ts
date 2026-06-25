@@ -27,6 +27,15 @@ const config: Config = {
         "card-hover":
           "0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05)",
       },
+      keyframes: {
+        fadeSlideIn: {
+          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        fadeSlideIn: "fadeSlideIn 0.5s ease-out",
+      },
     },
   },
   plugins: [],
