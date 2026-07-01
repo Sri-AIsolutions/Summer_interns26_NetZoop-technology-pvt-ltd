@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 from uuid import UUID
 
 from sqlalchemy import func, text
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.models import Branch, Course, CourseAlias, CurriculumDocument, LabCompanion, Prerequisite, Program
 
@@ -51,6 +51,7 @@ def search_courses(db: Session, query: str, page: int = 1, limit: int = 20) -> T
     # Layer 1: exact course_code match
     exact = (
         db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .filter(Course.course_code == q, Course.is_active.is_(True))
         .order_by(Course.semester)
         .all()
@@ -63,6 +64,7 @@ def search_courses(db: Session, query: str, page: int = 1, limit: int = 20) -> T
     # Layer 2: alias match (legacy, cross_listed, abbreviation)
     alias_courses = (
         db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(CourseAlias)
         .filter(CourseAlias.alias.ilike(q), Course.is_active.is_(True))
         .order_by(Course.semester)
@@ -78,6 +80,7 @@ def search_courses(db: Session, query: str, page: int = 1, limit: int = 20) -> T
     tsvector = func.to_tsvector("english", Course.title + " " + Course.course_code)
     fts = (
         db.query(Course, func.ts_rank(tsvector, tsquery).label("rank"))
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .filter(tsvector.op("@@")(tsquery), Course.is_active.is_(True))
         .order_by(text("rank DESC"))
         .all()
@@ -100,6 +103,7 @@ def get_semester_courses(
 ) -> List[dict]:
     courses = (
         db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(Program)
         .join(Branch)
         .filter(
@@ -123,6 +127,7 @@ def get_courses_by_category(
 ) -> List[dict]:
     courses = (
         db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(Program)
         .join(Branch)
         .filter(
@@ -256,12 +261,18 @@ def get_category_split(
 # ── BE-07: Course relationships ───────────────────────────────
 
 def get_course_relationships(db: Session, course_code: str) -> dict:
-    course = db.query(Course).filter(Course.course_code == course_code, Course.is_active.is_(True)).first()
+    course = (
+        db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
+        .filter(Course.course_code == course_code, Course.is_active.is_(True))
+        .first()
+    )
     if not course:
         return {"prerequisites": [], "lab_companions": []}
 
     prereqs = (
         db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(
             Course.prerequisite_for,
             Course.id == Prerequisite.prerequisite_course_id,
@@ -271,6 +282,7 @@ def get_course_relationships(db: Session, course_code: str) -> dict:
     )
     lab_comps = (
         db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(
             Course.lab_companions_theory,
             Course.id == LabCompanion.lab_course_id,

@@ -14,18 +14,25 @@ const SHORTHAND_MAP: Record<string, { program: string; branch: string }> = {
   ece: { program: "BTECH", branch: "ECE" },
 };
 
+// Cache resolved program+branch to avoid extra API call on every semester switch
+const _branchCache: Record<string, { program: string; branch: string }> = {};
+
 async function resolveProgramBranch(
   programId: string
 ): Promise<{ program: string; branch: string }> {
-  const shorthand = SHORTHAND_MAP[programId.toLowerCase()];
+  const key = programId.toLowerCase();
+  const shorthand = SHORTHAND_MAP[key];
   if (shorthand) return shorthand;
+  if (_branchCache[key]) return _branchCache[key];
 
   const programCode = programId.toUpperCase();
   const branches = await apiClient.get<Branch[]>(
     `/api/programs/${programCode}/branches`
   );
   const branchCode = branches.length > 0 ? branches[0].code : programCode;
-  return { program: programCode, branch: branchCode };
+  const result = { program: programCode, branch: branchCode };
+  _branchCache[key] = result;
+  return result;
 }
 
 export async function getPrograms(): Promise<Program[]> {
