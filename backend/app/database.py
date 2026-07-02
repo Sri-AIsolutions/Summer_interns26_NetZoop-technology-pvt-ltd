@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from app.config import settings
@@ -9,6 +10,13 @@ engine = create_engine(
     pool_recycle=300,
     pool_pre_ping=True,
 )
+=======
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+from app.config import settings
+
+engine = create_engine(settings.database_url, pool_pre_ping=True)
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -19,6 +27,7 @@ def get_db():
         yield db
     finally:
         db.close()
+<<<<<<< HEAD
 
 
 def warm_db():
@@ -28,3 +37,5 @@ def warm_db():
             conn.execute(text("SELECT 1"))
     except Exception:
         pass
+=======
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c

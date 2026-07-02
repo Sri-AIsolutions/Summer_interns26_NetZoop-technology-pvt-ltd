@@ -29,9 +29,15 @@ class Program(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+<<<<<<< HEAD
     branches = relationship("Branch", back_populates="program", lazy="raise")
     courses = relationship("Course", back_populates="program", lazy="raise")
     curriculum_documents = relationship("CurriculumDocument", back_populates="program", lazy="raise")
+=======
+    branches = relationship("Branch", back_populates="program", lazy="selectin")
+    courses = relationship("Course", back_populates="program", lazy="selectin")
+    curriculum_documents = relationship("CurriculumDocument", back_populates="program", lazy="selectin")
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 
 
 class Branch(Base):
@@ -47,8 +53,13 @@ class Branch(Base):
     __table_args__ = (UniqueConstraint("program_id", "code", name="uq_branch_program_code"),)
 
     program = relationship("Program", back_populates="branches", lazy="selectin")
+<<<<<<< HEAD
     courses = relationship("Course", back_populates="branch", lazy="raise")
     curriculum_documents = relationship("CurriculumDocument", back_populates="branch", lazy="raise")
+=======
+    courses = relationship("Course", back_populates="branch", lazy="selectin")
+    curriculum_documents = relationship("CurriculumDocument", back_populates="branch", lazy="selectin")
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 
 
 class CurriculumDocument(Base):
@@ -68,7 +79,11 @@ class CurriculumDocument(Base):
 
     program = relationship("Program", back_populates="curriculum_documents", lazy="selectin")
     branch = relationship("Branch", back_populates="curriculum_documents", lazy="selectin")
+<<<<<<< HEAD
     courses = relationship("Course", back_populates="curriculum_document", lazy="raise")
+=======
+    courses = relationship("Course", back_populates="curriculum_document", lazy="selectin")
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 
 
 class Course(Base):
@@ -100,33 +115,53 @@ class Course(Base):
     program = relationship("Program", back_populates="courses", lazy="selectin")
     branch = relationship("Branch", back_populates="courses", lazy="selectin")
     curriculum_document = relationship("CurriculumDocument", back_populates="courses", lazy="selectin")
+<<<<<<< HEAD
     aliases = relationship("CourseAlias", back_populates="course", lazy="raise", cascade="all, delete-orphan")
+=======
+    aliases = relationship("CourseAlias", back_populates="course", lazy="selectin", cascade="all, delete-orphan")
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
     prerequisites = relationship(
         "Prerequisite",
         foreign_keys="Prerequisite.course_id",
         back_populates="course",
+<<<<<<< HEAD
         lazy="raise",
+=======
+        lazy="selectin",
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
         cascade="all, delete-orphan",
     )
     prerequisite_for = relationship(
         "Prerequisite",
         foreign_keys="Prerequisite.prerequisite_course_id",
         back_populates="prerequisite_course",
+<<<<<<< HEAD
         lazy="raise",
+=======
+        lazy="selectin",
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
         cascade="all, delete-orphan",
     )
     lab_companions_theory = relationship(
         "LabCompanion",
         foreign_keys="LabCompanion.theory_course_id",
         back_populates="theory_course",
+<<<<<<< HEAD
         lazy="raise",
+=======
+        lazy="selectin",
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
         cascade="all, delete-orphan",
     )
     lab_companions_lab = relationship(
         "LabCompanion",
         foreign_keys="LabCompanion.lab_course_id",
         back_populates="lab_course",
+<<<<<<< HEAD
         lazy="raise",
+=======
+        lazy="selectin",
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
         cascade="all, delete-orphan",
     )
 

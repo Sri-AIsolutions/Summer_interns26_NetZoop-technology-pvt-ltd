@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+<<<<<<< HEAD
 from app.cache import course_cache
+=======
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 from app.database import get_db
 from app.schemas import (
     CategorySplitResponse,
@@ -35,6 +38,7 @@ def semester_curriculum(
     db: Session = Depends(get_db),
 ):
     """BE-04: Return all courses for a given program+branch+batch_year+semester."""
+<<<<<<< HEAD
     cache_key = f"semester:{program}:{branch}:{batch_year}:{semester}"
     cached = course_cache.get(cache_key)
     if cached is not None:
@@ -46,6 +50,13 @@ def semester_curriculum(
     }
     course_cache.set(cache_key, result)
     return result
+=======
+    courses = get_semester_courses(db, program, branch, batch_year, semester)
+    return {
+        "semester": semester,
+        "courses": [map_course_to_frontend(c) for c in courses],
+    }
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 
 
 @router.get("/semester/category")

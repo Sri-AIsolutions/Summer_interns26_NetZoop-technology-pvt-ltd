@@ -15,6 +15,7 @@ export default function CoursesPage() {
   const [selectedProgram, setSelectedProgram] = useState("");
   const [selectedSemester, setSelectedSemester] = useState(1);
   const [courses, setCourses] = useState<Course[]>([]);
+<<<<<<< HEAD
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -62,6 +63,39 @@ export default function CoursesPage() {
         .finally(() => setLoading(false));
     }
   }
+=======
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getPrograms().then((loadedPrograms) => {
+      setPrograms(loadedPrograms);
+      if (loadedPrograms.length > 0) {
+        setSelectedProgram(loadedPrograms[0].id);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!selectedProgram) return;
+
+    setLoading(true);
+    const prog = programs.find((p) => p.id === selectedProgram);
+    if (!prog) {
+      setLoading(false);
+      return;
+    }
+    getCoursesBySemester(prog.code, selectedSemester)
+      .then((data) => {
+        setCourses(data);
+      })
+      .catch(() => {
+        setCourses([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [selectedProgram, selectedSemester, programs]);
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 
   const totalCredits = courses.reduce((sum, c) => sum + c.credits, 0);
 
@@ -76,8 +110,13 @@ export default function CoursesPage() {
         programs={programs}
         selectedProgram={selectedProgram}
         selectedSemester={selectedSemester}
+<<<<<<< HEAD
         onProgramChange={handleProgramChange}
         onSemesterChange={handleSemesterChange}
+=======
+        onProgramChange={(id) => setSelectedProgram(id)}
+        onSemesterChange={(sem) => setSelectedSemester(sem)}
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
       />
 
       {loading ? (

@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+<<<<<<< HEAD
 from app.cache import program_cache
+=======
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 from app.database import get_db
 from app.models import Branch, Program
 from app.schemas import BranchResponse, ProgramResponse
@@ -11,6 +14,7 @@ router = APIRouter(prefix="/api/programs", tags=["programs"])
 
 @router.get("")
 def list_programs(db: Session = Depends(get_db)):
+<<<<<<< HEAD
     cached = program_cache.get("list")
     if cached is not None:
         return cached
@@ -18,14 +22,21 @@ def list_programs(db: Session = Depends(get_db)):
     result = [ProgramResponse.model_validate(p) for p in programs]
     program_cache.set("list", result)
     return result
+=======
+    programs = db.query(Program).order_by(Program.code).all()
+    return [ProgramResponse.model_validate(p) for p in programs]
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 
 
 @router.get("/{program_code}/branches")
 def list_branches(program_code: str, db: Session = Depends(get_db)):
+<<<<<<< HEAD
     cache_key = f"branches:{program_code}"
     cached = program_cache.get(cache_key)
     if cached is not None:
         return cached
+=======
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
     branches = (
         db.query(Branch)
         .join(Program)
@@ -33,6 +44,10 @@ def list_branches(program_code: str, db: Session = Depends(get_db)):
         .order_by(Branch.code)
         .all()
     )
+<<<<<<< HEAD
     result = [BranchResponse.model_validate(b) for b in branches]
     program_cache.set(cache_key, result)
     return result
+=======
+    return [BranchResponse.model_validate(b) for b in branches]
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c

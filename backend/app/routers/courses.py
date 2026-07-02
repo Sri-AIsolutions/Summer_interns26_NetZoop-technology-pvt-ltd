@@ -1,5 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+<<<<<<< HEAD
 from sqlalchemy.orm import Session, joinedload
+=======
+from sqlalchemy.orm import Session
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 
 from app.database import get_db
 from app.models import Branch, Course, Program
@@ -33,9 +37,14 @@ def course_preview(
     """FIX 3A: Return the first N courses across all semesters — for home page preview."""
     courses = (
         db.query(Course)
+<<<<<<< HEAD
         .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(Program)
         .join(Branch, Course.branch_id == Branch.id)
+=======
+        .join(Program)
+        .join(Branch)
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
         .filter(
             Program.code == program,
             Branch.code == branch,

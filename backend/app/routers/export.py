@@ -1,5 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+<<<<<<< HEAD
 from sqlalchemy.orm import Session, joinedload
+=======
+from sqlalchemy.orm import Session
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
 
 from app.database import get_db
 from app.models import Branch, Course, Program
@@ -29,7 +33,10 @@ def export_curriculum(
     for sem_num in range(1, prog.duration_years * 2 + 1):
         courses = (
             db.query(Course)
+<<<<<<< HEAD
             .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
+=======
+>>>>>>> bf6f30f4f688adc078b4fe50d0695691bcee795c
             .filter(
                 Course.program_id == prog.id,
                 Course.branch_id == br.id,
