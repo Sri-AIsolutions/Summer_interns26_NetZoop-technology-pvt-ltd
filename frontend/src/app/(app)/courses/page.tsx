@@ -15,37 +15,48 @@ export default function CoursesPage() {
   const [selectedProgram, setSelectedProgram] = useState("");
   const [selectedSemester, setSelectedSemester] = useState(1);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getPrograms().then((loadedPrograms) => {
+    Promise.all([
+      getPrograms(),
+      getCoursesBySemester("BTECH", 1),
+    ]).then(([loadedPrograms, loadedCourses]) => {
       setPrograms(loadedPrograms);
+      setCourses(loadedCourses);
       if (loadedPrograms.length > 0) {
         setSelectedProgram(loadedPrograms[0].id);
       }
+    }).catch(() => {
+      setCourses([]);
+    }).finally(() => {
+      setLoading(false);
     });
   }, []);
 
-  useEffect(() => {
-    if (!selectedProgram) return;
-
-    setLoading(true);
-    const prog = programs.find((p) => p.id === selectedProgram);
-    if (!prog) {
-      setLoading(false);
-      return;
+  function handleProgramChange(id: string) {
+    setSelectedProgram(id);
+    const prog = programs.find((p) => p.id === id);
+    if (prog) {
+      setLoading(true);
+      getCoursesBySemester(prog.code, selectedSemester)
+        .then(setCourses)
+        .catch(() => setCourses([]))
+        .finally(() => setLoading(false));
     }
-    getCoursesBySemester(prog.code, selectedSemester)
-      .then((data) => {
-        setCourses(data);
-      })
-      .catch(() => {
-        setCourses([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [selectedProgram, selectedSemester, programs]);
+  }
+
+  function handleSemesterChange(sem: number) {
+    setSelectedSemester(sem);
+    const prog = programs.find((p) => p.id === selectedProgram);
+    if (prog) {
+      setLoading(true);
+      getCoursesBySemester(prog.code, sem)
+        .then(setCourses)
+        .catch(() => setCourses([]))
+        .finally(() => setLoading(false));
+    }
+  }
 
   const totalCredits = courses.reduce((sum, c) => sum + c.credits, 0);
 
@@ -60,8 +71,8 @@ export default function CoursesPage() {
         programs={programs}
         selectedProgram={selectedProgram}
         selectedSemester={selectedSemester}
-        onProgramChange={(id) => setSelectedProgram(id)}
-        onSemesterChange={(sem) => setSelectedSemester(sem)}
+        onProgramChange={handleProgramChange}
+        onSemesterChange={handleSemesterChange}
       />
 
       {loading ? (

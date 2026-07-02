@@ -8,10 +8,12 @@ interface Branch {
   code: string;
 }
 
-// Maps shorthand IDs used by homepage/chat ("cse", "ece") to full backend codes
+// Maps shorthand/program codes to full backend codes
 const SHORTHAND_MAP: Record<string, { program: string; branch: string }> = {
   cse: { program: "BTECH", branch: "CSE" },
   ece: { program: "BTECH", branch: "ECE" },
+  btech: { program: "BTECH", branch: "CSE" },
+  me: { program: "BTECH", branch: "ME" },
 };
 
 // Cache resolved program+branch to avoid extra API call on every semester switch
