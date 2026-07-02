@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
 from app.models import Branch, Course, Program
@@ -28,6 +28,7 @@ def curriculum_diff(
 
     old_courses = (
         db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .filter(
             Course.program_id == prog.id,
             Course.branch_id == br.id,
@@ -38,6 +39,7 @@ def curriculum_diff(
     )
     new_courses = (
         db.query(Course)
+        .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .filter(
             Course.program_id == prog.id,
             Course.branch_id == br.id,

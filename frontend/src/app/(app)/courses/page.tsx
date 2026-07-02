@@ -18,6 +18,7 @@ export default function CoursesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
       getPrograms(),
       getCoursesBySemester("BTECH", 1),
@@ -26,6 +27,10 @@ export default function CoursesPage() {
       setCourses(loadedCourses);
       if (loadedPrograms.length > 0) {
         setSelectedProgram(loadedPrograms[0].id);
+      }
+      // Pre-fetch remaining semesters to warm the backend cache
+      for (let sem = 2; sem <= 8; sem++) {
+        getCoursesBySemester("BTECH", sem).catch(() => {});
       }
     }).catch(() => {
       setCourses([]);

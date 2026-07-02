@@ -105,7 +105,7 @@ def get_semester_courses(
         db.query(Course)
         .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(Program)
-        .join(Branch)
+        .join(Course.branch)
         .filter(
             Program.code == program_code,
             Branch.code == branch_code,
@@ -129,7 +129,7 @@ def get_courses_by_category(
         db.query(Course)
         .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(Program)
-        .join(Branch)
+        .join(Course.branch)
         .filter(
             Program.code == program_code,
             Branch.code == branch_code,
@@ -195,7 +195,7 @@ def get_distribution(
             func.sum(Course.credits).label("total_credits"),
         )
         .join(Program)
-        .join(Branch)
+        .join(Branch, Course.branch_id == Branch.id)
         .filter(
             Program.code == program_code,
             Branch.code == branch_code,
@@ -230,7 +230,7 @@ def get_category_split(
             func.sum(Course.credits).label("credits"),
         )
         .join(Program)
-        .join(Branch)
+        .join(Branch, Course.branch_id == Branch.id)
         .filter(
             Program.code == program_code,
             Branch.code == branch_code,
@@ -273,21 +273,15 @@ def get_course_relationships(db: Session, course_code: str) -> dict:
     prereqs = (
         db.query(Course)
         .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
-        .join(
-            Course.prerequisite_for,
-            Course.id == Prerequisite.prerequisite_course_id,
-        )
+        .join(Course.prerequisite_for)
         .filter(Prerequisite.course_id == course.id, Course.is_active.is_(True))
         .all()
     )
     lab_comps = (
         db.query(Course)
         .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
-        .join(
-            Course.lab_companions_theory,
-            Course.id == LabCompanion.lab_course_id,
-        )
-        .filter(LabCompanion.theory_course_id == course.id, Course.is_active.is_(True))
+        .join(Course.lab_companions_theory)
+        .filter(Course.is_active.is_(True))
         .all()
     )
 

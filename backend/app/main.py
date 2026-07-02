@@ -1,8 +1,12 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+from app.database import get_db
 
 from app.config import settings
 
@@ -15,6 +19,9 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting %s", settings.app_name)
+    from app.database import warm_db
+    warm_db()
+    logger.info("Database warm-up complete")
     yield
     logger.info("Shutting down %s", settings.app_name)
 
@@ -44,5 +51,9 @@ app.include_router(programs.router)
 
 
 @app.get("/health")
-def health():
-    return {"status": "healthy", "app": settings.app_name}
+def health(db: Session = Depends(get_db)):
+    try:
+        db.execute(text("SELECT 1"))
+        return {"status": "healthy", "app": settings.app_name}
+    except Exception as e:
+        return {"status": "degraded", "detail": str(e)}

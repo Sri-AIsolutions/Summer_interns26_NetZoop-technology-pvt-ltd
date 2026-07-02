@@ -35,7 +35,7 @@ def course_preview(
         db.query(Course)
         .options(joinedload(Course.program), joinedload(Course.branch), joinedload(Course.curriculum_document))
         .join(Program)
-        .join(Branch)
+        .join(Branch, Course.branch_id == Branch.id)
         .filter(
             Program.code == program,
             Branch.code == branch,
